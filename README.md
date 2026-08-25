@@ -1,10 +1,10 @@
-# PENUMBRA: A Shadow fleet toolkit
+# PENUMBRA: A Shadow Fleet toolkit
 
 [![CI](https://github.com/deadlettersovereignty/shadow-fleet-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/deadlettersovereignty/shadow-fleet-toolkit/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
-An OSINT pipeline for monitoring sanctioned and sanctions-evading tanker
+Created for my blog, this is an OSINT pipeline for monitoring sanctioned and sanctions-evading tanker
 traffic: pull official designation lists, ingest AIS, detect the behaviours
 associated with evasion, score vessels, and produce a mapped brief.
 
@@ -70,12 +70,12 @@ Python 3.10+. The detectors themselves need nothing beyond the standard library.
 
 ## Data sources
 
-**Sanctions lists.** OFAC SDN, the EU consolidated list and the UK list are all
+**Sanctions lists.** We're rocking with the classics: OFAC SDN, the EU consolidated list and the UK list are all
 free. Download URLs move; every source can be fed from a local file instead
 (`--file path --authority OFAC`), which is the more reliable choice for a
 scheduled job.
 
-**AIS.** [aisstream.io](https://aisstream.io) offers a free websocket feed. For
+**AIS.** Hooray for open-source maritime data. [aisstream.io](https://aisstream.io) offers a free websocket feed. For
 history rather than live capture, the
 [Danish Maritime Authority](https://web.ais.dk/aisdata/) publishes free daily
 AIS covering the Baltic and Danish Straits — the single most useful free
@@ -84,12 +84,12 @@ NOAA Marine Cadastre covers US waters. Commercial providers (Spire, Kpler,
 Windward, MarineTraffic) add satellite AIS, which matters because terrestrial
 receivers only reach 40–60 nm offshore.
 
-**What AIS cannot tell you.** Build year, deadweight, beneficial ownership,
+**Pitfalls of AIS.** Various things are missing, despite the strength of the AIS-forward approach: these are uild year, deadweight, beneficial ownership,
 management, P&I cover and classification society all have to come from a
 registry — Equasis (free, registration required), IHS, or Lloyd's List
-Intelligence. Feed them in via `shadowfleet risk --enrich`.
+Intelligence. Feed them in via `shadowfleet risk --enrich`. You'll need to do this research yourself, sorry big guy.
 
-## Reading the output
+## "How Do I Work This Thing?!": Reading the output
 
 Each detector emits a severity score. These are triage priorities, not
 verdicts, and the weights in `risk.py` are judgement calls — publish them
@@ -98,38 +98,34 @@ the conclusion.
 
 Things worth keeping in mind before acting on a detection:
 
-**AIS is unauthenticated.** It is an unencrypted VHF broadcast with no signing.
-Position, identity and status are whatever the transmitter claims. That is
-exactly what makes spoofing detectable — and what makes false positives
-routine.
+**Do your homework.** Please. This database alone is not in any way indication of Shadow Fleet status, merely a place to start.
 
-**Most gaps are boring.** A vessel 200 nm offshore with no satellite pass
-overhead looks identical to one that pulled the transponder breaker. The gap
-detector weights gaps by whether they started somewhere with good receiver
-coverage, which helps but does not eliminate this.
+**AIS is unauthenticated.** It is an unencrypted VHF broadcast with no signing.
+Position, identity and status are whatever the transmitter claims. Unfortunately, we just gotta deal with this fact.
+
+**Most gaps tend to be boring.** Lock in, most of the pauses to transponder status are neutral
 
 **Proximity is not transfer.** Tugs, bunker barges, pilot boats and vessels
 anchored on the same tide all reproduce the STS signature. Corroborate with
-draught changes, duration, and imagery where you can get it.
+draught changes, duration, and imagery where you can get it. I firmly suggest PlanetLabs if you have the money to task. 
 
-**Identity signals are the strongest.** One IMO broadcasting under multiple
+**Identity signals are pretty strong.** One IMO broadcasting under multiple
 MMSIs, or an MMSI cycling through names, is hard to explain innocently and hard
-to produce by accident. Weight these above gaps.
+to produce by accident. Weight these above gaps. I've tried to bake this into the system but it's not the easiest thing in the world.
 
-**A mention is not a designation.** Sanctions entries frequently name vessel
+**Careful what you wish for.** Sanctions entries frequently name vessel
 IMOs inside an owner's or manager's remarks. Those are recorded with
 `basis = 'linked'` and excluded unless you pass `--include-linked`, because
-treating a mention as a listing puts undesignated hulls on a sanctions list.
+treating a mention as a listing puts undesignated hulls on a sanctions list. Don't go poking around with vessel owners you wouldn't want to meet in a dark boardroom.
 
-**Designation is not the same as "shadow fleet".** Most tankers flying a
+**False designation is not really the same as "shadow fleet".** Most tankers flying a
 convenience flag are engaged in entirely ordinary trade, and an old ship is
-just an old ship. Naming a vessel or its crew has real consequences —
-insurance, port access, livelihoods — so treat a high score as the beginning of
-reporting, not the end of it.
+just an old ship. Again, do your homework.
 
-**Check the zone definitions.** `zones.py` holds approximate centres and
+**Check the ZONE definitions.** `zones.py` holds approximate centres and
 generous radii. Anchorage usage shifts constantly. Verify against a chart
 before publishing, and maintain the file as you learn.
+Welcome to the ZONE.
 
 ## Layout
 
