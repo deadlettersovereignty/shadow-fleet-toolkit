@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly run: the upstream sanctions-list formats change without notice,
+    # and a scheduled build surfaces a broken parser before an investigation does.
+    - cron: "0 6 * * 1"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[all,dev]"
+      - name: Lint
+        run: ruff check src tests
+      - name: Test
+        run: pytest --cov=shadowfleet --cov-report=term-missing
+      - name: Smoke-test the pipeline end to end
+        run: |
+          shadowfleet testdata --db ci.db
+          shadowfleet gaps   --db ci.db --min-hours 4
+          shadowfleet sts    --db ci.db
+          shadowfleet spoof  --db ci.db
+          shadowfleet risk   --db ci.db
+          shadowfleet report --db ci.db --out ci.html --geojson ci.geojson
+          test -s ci.html && test -s ci.geojson
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pipx run build
+      - run: pipx run twine check dist/*

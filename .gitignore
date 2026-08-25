@@ -1,0 +1,39 @@
+# Databases and collected data - never commit AIS captures or a working DB
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+data/
+downloads/
+*.nmea
+aisdk-*.csv
+aisdk-*.zip
+
+# Generated reports
+report.html
+*.geojson
+events.csv
+risk.csv
+watchlist.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.eggs/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
