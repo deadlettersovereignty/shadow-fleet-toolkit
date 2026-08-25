@@ -180,8 +180,7 @@ Roughly in order of value:
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Corrections to `zones.py` are
-especially welcome. Any detector change needs a test asserting both that the
-behaviour is caught and that the control vessel stays clean.
+especially welcome. I welcome assistance - 90% of the code here is held together with spit and string. If you see something that makes too much sense, assume Claude helped. Well, everybody's gotta learn sometime... 
 
 ## License
 
