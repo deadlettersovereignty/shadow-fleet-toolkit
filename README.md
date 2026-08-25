@@ -1,6 +1,6 @@
 # Shadow fleet toolkit
 
-[![CI](https://github.com/USERNAME/shadow-fleet-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/shadow-fleet-toolkit/actions/workflows/ci.yml)
+[![CI](https://github.com/deadlettersovereignty/shadow-fleet-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/deadlettersovereignty/shadow-fleet-toolkit/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
